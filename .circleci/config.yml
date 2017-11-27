@@ -67,12 +67,12 @@ workflows:
     jobs:
       - checkout_code
       - build_java:
-        requires:
-          - checkout_code
+          requires:
+            - checkout_code
       - build_go:
-        requires:
-          - checkout_code
+          requires:
+            - checkout_code
       - deploy:
-        requires:
-          - build_java
-          - build_go
+          requires:
+            - build_java
+            - build_go
