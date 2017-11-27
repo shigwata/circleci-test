@@ -63,13 +63,13 @@ workflows:
   build_and_deploy:
     jobs:
       - checkout_code
-      - build_java:
-        requires:
-          - checkout_code
-      - build_go:
-        requires:
-          - checkout_code
-      - deploy:
-        requires:
-          - build_java
-          - build_go
+      # - build_java:
+      #   requires:
+      #     - checkout_code
+      # - build_go:
+      #   requires:
+      #     - checkout_code
+      # - deploy:
+      #   requires:
+      #     - build_java
+      #     - build_go
