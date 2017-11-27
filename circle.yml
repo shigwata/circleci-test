@@ -1,0 +1,75 @@
+version: 2
+
+jobs:
+
+  checkout_code:
+    working_directory: ~/app
+    docker:
+      - image: google/cloud-sdk:latest
+    steps:
+      - checkout
+      - run:
+        command: |
+          mkdir -p /tmp/workspace/app
+          mv * .[!.]* /tmp/workspace/app/
+      - persist_to_workspace:
+        root: /tmp/workspace
+        paths:
+          - app
+
+  build_java:
+    working_directory: ~/app
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+    steps:
+      - attach_workspace:
+        at: /tmp/workspace
+      - run:
+        name: load code from workspace
+        command: |
+          # Move all files and dotfiles to current directory
+          mv /tmp/workspace/app/* /tmp/workspace/app/.[!.]* .
+      - run: ls
+      - run: java -version
+
+  build_go:
+    working_directory: working_directory: /go/src/github.com/CircleCI-Public/circleci-demo-go
+    docker:
+      - image: circleci/golang:1.8
+    steps:
+      - attach_workspace:
+        at: /tmp/workspace
+      - run:
+        name: load code from workspace
+        command: |
+          # Move all files and dotfiles to current directory
+          mv /tmp/workspace/app/* /tmp/workspace/app/.[!.]* .
+      - run: ls
+      - run: go version
+
+  deploy:
+    working_directory: ~/app
+    docker:
+      - image: google/cloud-sdk:latest
+    steps:
+      - attach_workspace:
+        at: /tmp/workspace
+      - run: ls
+      - run: gcloud --version
+      - run: echo "deploy done!"
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - checkout_code
+      - build_java
+        requires:
+          - checkout_code
+      - build_go
+        requires:
+          - checkout_code
+      - deploy
+        requires:
+          - build_java
+          - build_go
