@@ -15,6 +15,17 @@ references:
 
 jobs:
 
+  node:
+    docker:
+      - image: circleci/node:8.4.0
+      steps:
+        - run: printenv
+        - run: |
+            npm version
+            go version
+            java -version
+            mvn --version
+
   checkout_code:
     working_directory: ~/app
     docker:
@@ -117,6 +128,7 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
+      - node
       - checkout_code
       - build:
           requires:
