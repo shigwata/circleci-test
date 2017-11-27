@@ -33,7 +33,7 @@ jobs:
       - run: java -version
 
   build_go:
-    working_directory: working_directory: /go/src/github.com/CircleCI-Public/circleci-demo-go
+    working_directory: /go/src/github.com/CircleCI-Public/circleci-demo-go
     docker:
       - image: circleci/golang:1.8
     steps:
@@ -63,13 +63,13 @@ workflows:
   build_and_deploy:
     jobs:
       - checkout_code
-      - build_java
+      - build_java:
         requires:
           - checkout_code
-      - build_go
+      - build_go:
         requires:
           - checkout_code
-      - deploy
+      - deploy:
         requires:
           - build_java
           - build_go
