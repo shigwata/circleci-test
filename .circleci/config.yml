@@ -1,6 +1,8 @@
 version: 2
 
 references:
+  repo_dir: &repo_dir
+    /go/src/github.com/CircleCI-Public/circleci-demo-go
   workspace_root: &workspace_root
     /tmp/workspace
   attach_workspace: &attach_workspace
@@ -16,9 +18,9 @@ references:
 jobs:
 
   checkout_code:
-    working_directory: ~/app
+    working_directory: *repo_dir
     docker:
-      - image: google/cloud-sdk:latest
+      - image: google/cloud-sdk:178.0.0
     steps:
       - checkout
       - run:
@@ -31,7 +33,7 @@ jobs:
             - app
 
   build:
-    working_directory: /go/src/github.com/CircleCI-Public/circleci-demo-go
+    working_directory: *repo_dir
     docker:
       - image: circleci/golang:1.8
     steps:
@@ -45,13 +47,9 @@ jobs:
           ls ./go/
           mkdir -p /tmp/workspace/app/go/
           mv ./go/* /tmp/workspace/app/go/
-      - persist_to_workspace:
-          root: *workspace_root
-          paths:
-            - app/go
 
   build_java:
-    working_directory: ~/app
+    working_directory: *repo_dir
     docker:
       - image: circleci/openjdk:8-jdk-browsers
     steps:
@@ -65,15 +63,11 @@ jobs:
           ls ./java/
           mkdir -p /tmp/workspace/app/java/
           mv ./java/* /tmp/workspace/app/java/
-      - persist_to_workspace:
-          root: *workspace_root
-          paths:
-            - app/java
 
   deploy:
-    working_directory: ~/app
+    working_directory: *repo_dir
     docker:
-      - image: google/cloud-sdk:latest
+      - image: google/cloud-sdk:178.0.0
     steps:
       - *attach_workspace
       - *load_code
