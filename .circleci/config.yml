@@ -1,5 +1,18 @@
 version: 2
 
+references:
+  workspace_root: &workspace_root
+    /tmp/workspace
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *workspace_root
+  load_code: &load_code
+    run:
+      name: load code from workspace
+      command: |
+        # Move all files and dotfiles to current directory
+        mv /tmp/workspace/app/* /tmp/workspace/app/.[!.]* .
+
 jobs:
 
   checkout_code:
@@ -13,7 +26,7 @@ jobs:
           mkdir -p /tmp/workspace/app
           mv * .[!.]* /tmp/workspace/app/
       - persist_to_workspace:
-        root: /tmp/workspace
+        root: *workspace_root
         paths:
           - app
 
@@ -22,13 +35,8 @@ jobs:
     docker:
       - image: circleci/openjdk:8-jdk-browsers
     steps:
-      - attach_workspace:
-        at: /tmp/workspace
-      - run:
-        name: load code from workspace
-        command: |
-          # Move all files and dotfiles to current directory
-          mv /tmp/workspace/app/* /tmp/workspace/app/.[!.]* .
+      - *attach_workspace
+      - *load_code
       - run: ls
       - run: java -version
 
@@ -37,13 +45,8 @@ jobs:
     docker:
       - image: circleci/golang:1.8
     steps:
-      - attach_workspace:
-        at: /tmp/workspace
-      - run:
-        name: load code from workspace
-        command: |
-          # Move all files and dotfiles to current directory
-          mv /tmp/workspace/app/* /tmp/workspace/app/.[!.]* .
+      - *attach_workspace
+      - *load_code
       - run: ls
       - run: go version
 
@@ -52,8 +55,8 @@ jobs:
     docker:
       - image: google/cloud-sdk:latest
     steps:
-      - attach_workspace:
-        at: /tmp/workspace
+      - *attach_workspace
+      - *load_code
       - run: ls
       - run: gcloud --version
       - run: echo "deploy done!"
@@ -63,13 +66,13 @@ workflows:
   build_and_deploy:
     jobs:
       - checkout_code
-      # - build_java:
-      #   requires:
-      #     - checkout_code
-      # - build_go:
-      #   requires:
-      #     - checkout_code
-      # - deploy:
-      #   requires:
-      #     - build_java
-      #     - build_go
+      - build_java:
+        requires:
+          - checkout_code
+      - build_go:
+        requires:
+          - checkout_code
+      - deploy:
+        requires:
+          - build_java
+          - build_go
