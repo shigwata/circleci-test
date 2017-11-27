@@ -78,8 +78,8 @@ jobs:
       - *attach_workspace
       - *load_code
       - run: ls
-      - run: ls /go
-      - run: ls /java
+      - run: ls ./go
+      - run: ls ./java
       - run: gcloud --version
       - run: echo "deploy done!"
 
