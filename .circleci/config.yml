@@ -1,8 +1,6 @@
 version: 2
 
 references:
-  repo_dir: &repo_dir
-    /go/src/github.com/CircleCI-Public/circleci-demo-go
   workspace_root: &workspace_root
     /tmp/workspace
   attach_workspace: &attach_workspace
@@ -18,7 +16,7 @@ references:
 jobs:
 
   checkout_code:
-    working_directory: *repo_dir
+    working_directory: ~/app
     docker:
       - image: google/cloud-sdk:178.0.0
     steps:
@@ -33,7 +31,7 @@ jobs:
             - app
 
   build:
-    working_directory: *repo_dir
+    working_directory: /go/src/github.com/shigwata/circleci-test
     docker:
       - image: circleci/golang:1.8
     steps:
@@ -41,6 +39,7 @@ jobs:
       - *load_code
       - run: ls
       - run: go version
+      - run: printenv
       - run: |
           mkdir -p ./go/
           touch ./go/go.txt
@@ -49,7 +48,7 @@ jobs:
           mv ./go/* /tmp/workspace/app/go/
 
   build_java:
-    working_directory: *repo_dir
+    working_directory: ~/app
     docker:
       - image: circleci/openjdk:8-jdk-browsers
     steps:
@@ -57,6 +56,7 @@ jobs:
       - *load_code
       - run: ls
       - run: java -version
+      - run: printenv
       - run: |
           mkdir -p ./java/
           touch ./java/java.txt
@@ -65,7 +65,7 @@ jobs:
           mv ./java/* /tmp/workspace/app/java/
 
   deploy:
-    working_directory: *repo_dir
+    working_directory: ~/app
     docker:
       - image: google/cloud-sdk:178.0.0
     steps:
@@ -75,6 +75,7 @@ jobs:
       - run: ls ./go
       - run: ls ./java
       - run: gcloud --version
+      - run: printenv
       - run: echo "deploy done!"
 
 workflows:
