@@ -113,7 +113,9 @@ jobs:
     steps:
       - *attach_workspace
       - *load_code
-      - run: tree .
+      - run: ls go
+      - run: ls java
+      - run: ls node
       - run: gcloud --version
       - run: printenv
 
