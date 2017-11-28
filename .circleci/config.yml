@@ -15,18 +15,6 @@ references:
 
 jobs:
 
-  node:
-    docker:
-      - image: circleci/node:8.4.0
-    steps:
-      - run: printenv
-      - run:
-          command: |
-            npm version
-            go version
-            java -version
-            mvn --version
-
   checkout_code:
     working_directory: ~/app
     docker:
@@ -85,6 +73,27 @@ jobs:
           paths:
             - app/go
 
+  build_node:
+    working_directory: ~/app
+    docker:
+      - image: circleci/node:8.9.1
+    steps:
+      - *attach_workspace
+      - *load_code
+      - run: ls
+      - run: npm version
+      - run: printenv
+      - run: |
+          mkdir -p ./node/
+          touch ./node/node.txt
+          ls ./node/
+          mkdir -p /tmp/workspace/app/node/
+          mv ./node/* /tmp/workspace/app/node/
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - app/node
+
   build_java:
     working_directory: ~/app
     docker:
@@ -138,9 +147,11 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - node
       - checkout_code
       - build:
+          requires:
+            - checkout_code
+      - build_node:
           requires:
             - checkout_code
       - build_java:
@@ -149,4 +160,5 @@ workflows:
       - deploy:
           requires:
             - build
+            - build_node
             - build_java
