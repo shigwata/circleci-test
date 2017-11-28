@@ -41,6 +41,12 @@ jobs:
           root: *workspace_root
           paths:
             - app
+      - run:
+          command: |
+            npm version
+            go version
+            java -version
+            mvn --version
 
   build:
     working_directory: /go/src/github.com/shigwata/circleci-test
@@ -54,6 +60,9 @@ jobs:
       - run: ls
       - run: go version
       - run: printenv
+      - run:
+          command: |
+            npm version
 
       - run:
           name: Install go_appengine
