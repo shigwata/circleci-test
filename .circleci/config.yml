@@ -29,12 +29,6 @@ jobs:
           root: *workspace_root
           paths:
             - app
-      - run:
-          command: |
-            npm version
-            go version
-            java -version
-            mvn --version
 
   build:
     working_directory: /go/src/github.com/shigwata/circleci-test
@@ -48,11 +42,8 @@ jobs:
       - run: ls
       - run: go version
       - run: printenv
-      - run:
-          command: |
-            npm version
 
-      - run:
+      - run: &install_go_appengine
           name: Install go_appengine
           working_directory: ${HOME}GAE_GO_SDK_VERSION
           command: |
@@ -63,8 +54,7 @@ jobs:
       - run: goapp env
 
       - run: |
-          mkdir -p ./go/
-          touch ./go/go.txt
+          touch ./go/go2.txt
           ls ./go/
           mkdir -p /tmp/workspace/app/go/
           mv ./go/* /tmp/workspace/app/go/
@@ -72,27 +62,6 @@ jobs:
           root: *workspace_root
           paths:
             - app/go
-
-  build_node:
-    working_directory: ~/app
-    docker:
-      - image: circleci/node:8.9.1
-    steps:
-      - *attach_workspace
-      - *load_code
-      - run: ls
-      - run: npm version
-      - run: printenv
-      - run: |
-          mkdir -p ./node/
-          touch ./node/node.txt
-          ls ./node/
-          mkdir -p /tmp/workspace/app/node/
-          mv ./node/* /tmp/workspace/app/node/
-      - persist_to_workspace:
-          root: *workspace_root
-          paths:
-            - app/node
 
   build_java:
     working_directory: ~/app
@@ -106,8 +75,7 @@ jobs:
       - run: mvn --version
       - run: printenv
       - run: |
-          mkdir -p ./java/
-          touch ./java/java.txt
+          touch ./java/java2.txt
           ls ./java/
           mkdir -p /tmp/workspace/app/java/
           mv ./java/* /tmp/workspace/app/java/
@@ -115,6 +83,26 @@ jobs:
           root: *workspace_root
           paths:
             - app/java
+
+  build_node:
+    working_directory: ~/app
+    docker:
+      - image: circleci/node:8.9.1
+    steps:
+      - *attach_workspace
+      - *load_code
+      - run: ls
+      - run: npm version
+      - run: printenv
+      - run: |
+          touch ./node/node2.txt
+          ls ./node/
+          mkdir -p /tmp/workspace/app/node/
+          mv ./node/* /tmp/workspace/app/node/
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - app/node
 
   deploy:
     working_directory: ~/app
@@ -125,19 +113,11 @@ jobs:
     steps:
       - *attach_workspace
       - *load_code
-      - run: ls
-      - run: ls ./go
-      - run: ls ./java
+      - run: tree .
       - run: gcloud --version
       - run: printenv
 
-      - run:
-          name: Install go_appengine
-          working_directory: ${HOME}GAE_GO_SDK_VERSION
-          command: |
-            curl -o go_appengine.zip https://storage.googleapis.com/appengine-sdks/featured/go_appengine_sdk_linux_amd64-${GAE_GO_SDK_VERSION}.zip
-            unzip -q -d $HOME go_appengine.zip
-            echo 'export PATH=$PATH:$HOME/go_appengine' >> $BASH_ENV
+      - run: *install_go_appengine
       - run: goapp version
       - run: goapp env
 
@@ -151,14 +131,14 @@ workflows:
       - build:
           requires:
             - checkout_code
-      - build_node:
+      - build_java:
           requires:
             - checkout_code
-      - build_java:
+      - build_node:
           requires:
             - checkout_code
       - deploy:
           requires:
             - build
-            - build_node
             - build_java
+            - build_node
