@@ -50,8 +50,6 @@ jobs:
             curl -o go_appengine.zip https://storage.googleapis.com/appengine-sdks/featured/go_appengine_sdk_linux_amd64-${GAE_GO_SDK_VERSION}.zip
             unzip -q -d $HOME go_appengine.zip
             echo 'export PATH=$PATH:~/go_appengine' >> $BASH_ENV
-            mkdir -p /tmp/workspace/go_appengine
-            cp -r ~/go_appengine/ /tmp/workspace/go_appengine/
       - run: goapp version
       - run: goapp env
 
@@ -64,10 +62,6 @@ jobs:
           root: *workspace_root
           paths:
             - app/go
-      - persist_to_workspace:
-          root: *workspace_root
-          paths:
-            - go_appengine
 
   build_java:
     working_directory: ~/app
@@ -120,11 +114,10 @@ jobs:
       - *attach_workspace
       - *load_code
       - run:
-          name: load go_appengine from workspace
+          name: install app-engine-go
           working_directory: ~/
           command: |
-            cp -r /tmp/workspace/go_appengine/ ~/go_appengine/
-            echo 'export PATH=$PATH:~/go_appengine' >> $BASH_ENV
+            gcloud --quiet components install app-engine-go
 
       - run: ls go
       - run: ls java
