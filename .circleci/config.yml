@@ -81,9 +81,12 @@ jobs:
       - run: printenv
       - run:
           name: build java
+          working_directory: ~/app/java/my-app
           command: |
-            touch ./java/java2.txt
-            ls ./java/
+            mvn package
+      - run:
+          name: mv
+          command: |
             mkdir -p /tmp/workspace/app/java/
             mv ./java/* /tmp/workspace/app/java/
       - persist_to_workspace:
@@ -103,7 +106,7 @@ jobs:
       - run: ls node
       - run: printenv
 
-      - run: echo "deploy done!"
+      - deploy: echo "deploy done!"
 
 workflows:
   version: 2
