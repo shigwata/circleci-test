@@ -109,7 +109,7 @@ jobs:
     docker:
       - image: google/cloud-sdk:178.0.0
     environment:
-      GAE_GO_SDK_VERSION: 1.9.61
+      GOPATH: /go
     steps:
       - *attach_workspace
       - *load_code
