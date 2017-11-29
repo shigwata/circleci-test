@@ -51,7 +51,7 @@ jobs:
             unzip -q -d $HOME go_appengine.zip
             echo 'export PATH=$PATH:~/go_appengine' >> $BASH_ENV
             mkdir -p /tmp/workspace/go_appengine
-            cp -r ~/go_appengine /tmp/workspace/go_appengine
+            cp -r ~/go_appengine/ /tmp/workspace/go_appengine/
       - run: goapp version
       - run: goapp env
 
@@ -120,10 +120,10 @@ jobs:
       - *attach_workspace
       - *load_code
       - run:
-          name: load code from workspace
+          name: load go_appengine from workspace
           working_directory: ~/
           command: |
-            cp -r /tmp/workspace/go_appengine .
+            cp -r /tmp/workspace/go_appengine/ ~/go_appengine/
             echo 'export PATH=$PATH:~/go_appengine' >> $BASH_ENV
 
       - run: ls go
