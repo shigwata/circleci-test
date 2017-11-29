@@ -18,7 +18,7 @@ jobs:
   checkout_code:
     working_directory: ~/app
     docker:
-      - image: google/cloud-sdk:178.0.0
+      - image: google/cloud-sdk:alpine
     steps:
       - checkout
       - run:
@@ -105,9 +105,9 @@ jobs:
             - app/node
 
   deploy:
-    working_directory: ~/app
+    working_directory: /go/src/github.com/shigwata/circleci-test
     docker:
-      - image: google/cloud-sdk:178.0.0
+      - image: google/cloud-sdk:alpine
     environment:
       GOPATH: /go
     steps:
@@ -117,9 +117,6 @@ jobs:
           name: install app-engine-go
           working_directory: /usr/lib/google-cloud-sdk/platform/google_appengine
           command: |
-            # apt-get install google-cloud-sdk-app-engine-go
-            # dpkg -L google-cloud-sdk-app-engine-go
-            # /usr/lib/google-cloud-sdk/platform/google_appengine
             echo 'export PATH=$PATH:/usr/lib/google-cloud-sdk/platform/google_appengine' >> $BASH_ENV
             chmod +x goapp appcfg.py
       - run: ls go
