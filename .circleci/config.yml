@@ -18,7 +18,7 @@ jobs:
   checkout_code:
     working_directory: ~/app
     docker:
-      - image: google/cloud-sdk:178.0.0
+      - image: alpine
     steps:
       - checkout
       - run:
@@ -118,6 +118,7 @@ jobs:
           working_directory: /usr/lib/google-cloud-sdk/platform/google_appengine
           command: |
             # apt-get install google-cloud-sdk-app-engine-go
+            # dpkg -L google-cloud-sdk-app-engine-go
             # /usr/lib/google-cloud-sdk/platform/google_appengine
             echo 'export PATH=$PATH:/usr/lib/google-cloud-sdk/platform/google_appengine' >> $BASH_ENV
             chmod +x goapp appcfg.py
