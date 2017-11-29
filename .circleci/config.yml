@@ -1,6 +1,8 @@
 version: 2
 
 references:
+  repository_root: &repository_root
+    /go/src/github.com/shigwata/circleci-test
   workspace_root: &workspace_root
     /tmp/workspace
   attach_workspace: &attach_workspace
@@ -16,9 +18,9 @@ references:
 jobs:
 
   checkout_code:
-    working_directory: ~/app
+    working_directory: *repository_root
     docker:
-      - image: google/cloud-sdk:alpine
+      - image: vvakame/circleci-gaego
     steps:
       - checkout
       - run:
@@ -31,37 +33,40 @@ jobs:
             - app
 
   build:
-    working_directory: /go/src/github.com/shigwata/circleci-test
+    working_directory: *repository_root
     docker:
-      - image: circleci/golang:1.8
-    environment:
-      GAE_GO_SDK_VERSION: 1.9.61
+      - image: vvakame/circleci-gaego
     steps:
       - *attach_workspace
       - *load_code
       - run: ls
-      - run: go version
       - run: printenv
-
-      - run:
-          name: Install go_appengine
-          working_directory: ~/
-          command: |
-            curl -o go_appengine.zip https://storage.googleapis.com/appengine-sdks/featured/go_appengine_sdk_linux_amd64-${GAE_GO_SDK_VERSION}.zip
-            unzip -q -d $HOME go_appengine.zip
-            echo 'export PATH=$PATH:~/go_appengine' >> $BASH_ENV
+      - run: go version
       - run: goapp version
       - run: goapp env
+      - run: npm version
 
-      - run: |
-          touch ./go/go2.txt
-          ls ./go/
-          mkdir -p /tmp/workspace/app/go/
-          mv ./go/* /tmp/workspace/app/go/
+      - run:
+          name: build go
+          command: |
+            touch ./go/go2.txt
+            ls ./go/
+            mkdir -p /tmp/workspace/app/go/
+            mv ./go/* /tmp/workspace/app/go/
+
+      - run:
+          name: build node
+          command: |
+            touch ./node/node2.txt
+            ls ./node/
+            mkdir -p /tmp/workspace/app/node/
+            mv ./node/* /tmp/workspace/app/node/
+
       - persist_to_workspace:
           root: *workspace_root
           paths:
             - app/go
+            - app/node
 
   build_java:
     working_directory: ~/app
@@ -74,59 +79,29 @@ jobs:
       - run: java -version
       - run: mvn --version
       - run: printenv
-      - run: |
-          touch ./java/java2.txt
-          ls ./java/
-          mkdir -p /tmp/workspace/app/java/
-          mv ./java/* /tmp/workspace/app/java/
+      - run:
+          name: build java
+          command: |
+            touch ./java/java2.txt
+            ls ./java/
+            mkdir -p /tmp/workspace/app/java/
+            mv ./java/* /tmp/workspace/app/java/
       - persist_to_workspace:
           root: *workspace_root
           paths:
             - app/java
 
-  build_node:
-    working_directory: ~/app
-    docker:
-      - image: circleci/node:8.9.1
-    steps:
-      - *attach_workspace
-      - *load_code
-      - run: ls
-      - run: npm version
-      - run: printenv
-      - run: |
-          touch ./node/node2.txt
-          ls ./node/
-          mkdir -p /tmp/workspace/app/node/
-          mv ./node/* /tmp/workspace/app/node/
-      - persist_to_workspace:
-          root: *workspace_root
-          paths:
-            - app/node
-
   deploy:
-    working_directory: /go/src/github.com/shigwata/circleci-test
+    working_directory: *repository_root
     docker:
-      - image: google/cloud-sdk:178.0.0
-    environment:
-      GOPATH: /go
+      - image: vvakame/circleci-gaego
     steps:
       - *attach_workspace
       - *load_code
-      - run:
-          name: install app-engine-go
-          working_directory: /usr/lib/google-cloud-sdk/platform/google_appengine
-          command: |
-            echo 'export PATH=$PATH:/usr/lib/google-cloud-sdk/platform/google_appengine' >> $BASH_ENV
-            chmod +x goapp appcfg.py
       - run: ls go
       - run: ls java
       - run: ls node
-      - run: gcloud --version
       - run: printenv
-
-      - run: goapp version
-      - run: goapp env
 
       - run: echo "deploy done!"
 
@@ -141,11 +116,7 @@ workflows:
       - build_java:
           requires:
             - checkout_code
-      - build_node:
-          requires:
-            - checkout_code
       - deploy:
           requires:
             - build
             - build_java
-            - build_node
