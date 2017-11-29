@@ -18,7 +18,7 @@ jobs:
   checkout_code:
     working_directory: ~/app
     docker:
-      - image: alpine
+      - image: google/cloud-sdk:178.0.0
     steps:
       - checkout
       - run:
