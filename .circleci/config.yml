@@ -115,10 +115,12 @@ jobs:
       - *load_code
       - run:
           name: install app-engine-go
-          working_directory: ~/
+          working_directory: /usr/lib/google-cloud-sdk/platform/google_appengine
           command: |
-            gcloud --quiet components install app-engine-go
-
+            # apt-get install google-cloud-sdk-app-engine-go
+            # /usr/lib/google-cloud-sdk/platform/google_appengine
+            echo 'export PATH=$PATH:/usr/lib/google-cloud-sdk/platform/google_appengine' >> $BASH_ENV
+            chmod +x goapp appcfg.py
       - run: ls go
       - run: ls java
       - run: ls node
