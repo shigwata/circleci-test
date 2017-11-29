@@ -107,7 +107,7 @@ jobs:
   deploy:
     working_directory: /go/src/github.com/shigwata/circleci-test
     docker:
-      - image: google/cloud-sdk:alpine
+      - image: google/cloud-sdk:178.0.0
     environment:
       GOPATH: /go
     steps:
