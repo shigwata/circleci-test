@@ -71,10 +71,21 @@ jobs:
   build_java:
     working_directory: ~/app
     docker:
-      - image: circleci/openjdk:8-jdk-browsers
+      - image: google/cloud-sdk:alpine
     steps:
       - *attach_workspace
       - *load_code
+
+      - run: gcloud version
+      - run: gcloud components list
+
+      - run: java -version
+      - run: mvn --version
+
+      - run: apk --update add openjdk8
+      - run: gcloud components install app-engine-java
+
+
       - run: ls
       - run: java -version
       - run: mvn --version
