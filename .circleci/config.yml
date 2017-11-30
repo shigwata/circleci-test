@@ -28,7 +28,9 @@ jobs:
       - run:
           command: |
             mkdir -p /tmp/workspace/app
-            mv * .[!.]* /tmp/workspace/app/
+            shopt -s dotglob
+            mv * /tmp/workspace/app/
+            shopt -u dotglob
       - persist_to_workspace:
           root: *workspace_root
           paths:
@@ -83,6 +85,12 @@ jobs:
     steps:
       - *attach_workspace
       - *load_code
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "java/my-app/pom.xml" }}
+          - v1-dependencies-
+
       - run: ls -al /tmp/workspace/app/
 
       - run:
@@ -109,6 +117,11 @@ jobs:
           working_directory: java/my-app
           command: |
             mvn package
+
+      - save_cache:
+          paths:
+            - java/my-app/target
+          key: v1-dependencies-{{ checksum "java/my-app/pom.xml" }}
 
       # persist_to_workspace
       - run:
