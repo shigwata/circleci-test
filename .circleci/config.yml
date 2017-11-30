@@ -43,7 +43,7 @@ jobs:
       - *load_code
       - run: ls -al /tmp/workspace/app/
 
-      - run: ls
+      - run: ls -al
       - run: printenv
       - run: go version
       - run: goapp version
@@ -54,13 +54,13 @@ jobs:
           name: build go
           command: |
             touch go/go2.txt
-            ls go/
+            ls -al go/
 
       - run:
           name: build node
           command: |
             touch ./node/node2.txt
-            ls ./node/
+            ls -al ./node/
 
       # persist_to_workspace
       - run:
@@ -98,7 +98,7 @@ jobs:
           command: |
             sudo apt-get install google-cloud-sdk-datastore-emulator
 
-      - run: ls
+      - run: ls -al
       - run: gcloud version
       - run: gcloud components list
       - run: java -version
@@ -130,7 +130,7 @@ jobs:
       - *load_code
       - run: ls -al /tmp/workspace/app/
 
-      - run: ls go java node
+      - run: ls -al go java node
       - run: printenv
 
       - deploy:
