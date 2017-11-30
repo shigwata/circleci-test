@@ -18,9 +18,9 @@ references:
 jobs:
 
   checkout_code:
-    working_directory: *repository_root
+    working_directory: ~/app
     docker:
-      - image: vvakame/circleci-gaego
+      - image: google/cloud-sdk:alpine
     steps:
       - checkout
       - run:
