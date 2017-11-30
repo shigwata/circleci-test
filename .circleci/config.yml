@@ -11,14 +11,15 @@ references:
   load_code: &load_code
     run:
       name: load code from workspace
+      working_directory: /tmp/workspace/app/
       command: |
         # Move all files and dotfiles to current directory
-        mv /tmp/workspace/app/* /tmp/workspace/app/.[!.]* .
+        cp * .[!.]* .
 
 jobs:
 
   checkout_code:
-    working_directory: *repository_root
+    working_directory: ~/app
     docker:
       - image: google/cloud-sdk:alpine
     steps:
@@ -39,6 +40,7 @@ jobs:
     steps:
       - *attach_workspace
       - *load_code
+
       - run: ls
       - run: printenv
       - run: go version
@@ -49,19 +51,23 @@ jobs:
       - run:
           name: build go
           command: |
-            touch ./go/go2.txt
-            ls ./go/
-            mkdir -p /tmp/workspace/app/go/
-            mv ./go/* /tmp/workspace/app/go/
+            touch go/go2.txt
+            ls go/
 
       - run:
           name: build node
           command: |
             touch ./node/node2.txt
             ls ./node/
-            mkdir -p /tmp/workspace/app/node/
-            mv ./node/* /tmp/workspace/app/node/
 
+      # persist_to_workspace
+      - run:
+          name: persist to workspace
+          command: |
+            rm -rf /tmp/workspace/app/go
+            cp -r go /tmp/workspace/app
+            rm -rf /tmp/workspace/app/node
+            cp -r node /tmp/workspace/app
       - persist_to_workspace:
           root: *workspace_root
           paths:
@@ -69,7 +75,7 @@ jobs:
             - app/node
 
   build_java:
-    working_directory: *repository_root
+    working_directory: ~/app
     docker:
       - image: circleci/openjdk:8-jdk-browsers
     steps:
@@ -84,8 +90,9 @@ jobs:
             echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
             curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
             sudo apt-get update && sudo apt-get install google-cloud-sdk
-            # gcloud components install google-cloud-sdk-app-engine-java --quiet
-            # gcloud components install cloud-datastore-emulator --quiet
+      - run:
+          name: install components
+          command: |
             sudo apt-get install google-cloud-sdk-datastore-emulator
 
       - run: ls
@@ -99,11 +106,13 @@ jobs:
           working_directory: java/my-app
           command: |
             mvn package
+
+      # persist_to_workspace
       - run:
-          name: mv
+          name: persist to workspace
           command: |
-            mkdir -p /tmp/workspace/app/java/
-            mv ./java/* /tmp/workspace/app/java/
+            rm -rf /tmp/workspace/app/java
+            cp -r java /tmp/workspace/app
       - persist_to_workspace:
           root: *workspace_root
           paths:
@@ -116,9 +125,8 @@ jobs:
     steps:
       - *attach_workspace
       - *load_code
-      - run: ls go
-      - run: ls java
-      - run: ls node
+
+      - run: ls go java node
       - run: printenv
 
       - deploy:
