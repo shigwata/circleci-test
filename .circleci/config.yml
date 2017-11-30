@@ -13,7 +13,9 @@ references:
       name: load code from workspace
       command: |
         # Move all files and dotfiles to current directory
-        mv /tmp/workspace/app/* /tmp/workspace/app/.[!.]* .
+        shopt -s dotglob
+        mv /tmp/workspace/app/* .
+        shopt -u dotglob
 
 jobs:
 
