@@ -13,7 +13,7 @@ references:
       name: load code from workspace
       command: |
         # Move all files and dotfiles to current directory
-        cp /tmp/workspace/app/* /tmp/workspace/app/.[!.]* .
+        mv /tmp/workspace/app/* /tmp/workspace/app/.[!.]* .
 
 jobs:
 
@@ -39,6 +39,7 @@ jobs:
     steps:
       - *attach_workspace
       - *load_code
+      - run: ls -al /tmp/workspace/app/
 
       - run: ls
       - run: printenv
@@ -80,6 +81,7 @@ jobs:
     steps:
       - *attach_workspace
       - *load_code
+      - run: ls -al /tmp/workspace/app/
 
       - run:
           name: install gcloud
@@ -124,6 +126,7 @@ jobs:
     steps:
       - *attach_workspace
       - *load_code
+      - run: ls -al /tmp/workspace/app/
 
       - run: ls go java node
       - run: printenv
