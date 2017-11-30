@@ -11,10 +11,9 @@ references:
   load_code: &load_code
     run:
       name: load code from workspace
-      working_directory: /tmp/workspace/app/
       command: |
         # Move all files and dotfiles to current directory
-        cp * .[!.]* .
+        cp /tmp/workspace/app/* /tmp/workspace/app/.[!.]* .
 
 jobs:
 
