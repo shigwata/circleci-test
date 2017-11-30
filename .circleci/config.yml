@@ -18,7 +18,7 @@ references:
 jobs:
 
   checkout_code:
-    working_directory: ~/app
+    working_directory: *repository_root
     docker:
       - image: google/cloud-sdk:alpine
     steps:
@@ -69,7 +69,7 @@ jobs:
             - app/node
 
   build_java:
-    working_directory: ~/app
+    working_directory: *repository_root
     docker:
       - image: circleci/openjdk:8-jdk-browsers
     steps:
@@ -96,7 +96,7 @@ jobs:
       - run: printenv
       - run:
           name: build java
-          working_directory: ~/app/java/my-app
+          working_directory: java/my-app
           command: |
             mvn package
       - run:
