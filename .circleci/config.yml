@@ -85,7 +85,8 @@ jobs:
             curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
             sudo apt-get update && sudo apt-get install google-cloud-sdk
             # gcloud components install google-cloud-sdk-app-engine-java --quiet
-            gcloud components install cloud-datastore-emulator --quiet
+            # gcloud components install cloud-datastore-emulator --quiet
+            sudo apt-get install google-cloud-sdk-datastore-emulator
 
       - run: ls
       - run: gcloud version
