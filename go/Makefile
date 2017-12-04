@@ -1,3 +1,6 @@
+GOPACKAGES = `go list -f '{{join .Deps "\n"}}' | grep -v vendor/ | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}'`
+CWD = app
+
 .PHONY: all
 
 project_id := ${PROJECT_ID}
@@ -13,10 +16,10 @@ setup: ## setup
 		dep ensure
 
 serve: ## ローカルサーバ実行
-		dev_appserver.py app
+		dev_appserver.py $(CWD)
 
 deploy: ## gaeへデプロイ OPTIONS: project_id=${PROJECT_ID} version=${VERSION}
-		goapp deploy -application ${project_id} -version ${version} app
+		goapp deploy -application ${project_id} -version ${version} $(CWD)
 
 test: ## Test実行
-		cd ./app && goapp test -cover -v `go list -f '{{join .Deps "\n"}}' | grep -v vendor/ | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}'`
+		cd $(CWD) && goapp test -cover -v $(GOPACKAGES)

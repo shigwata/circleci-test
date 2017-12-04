@@ -9,12 +9,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/shigwata/gae-go-sample"
-  packages = ["hello"]
-  revision = "da37276c60fe2ff579ed8febfbe33f7f9ceb0eff"
-
-[[projects]]
-  branch = "master"
   name = "golang.org/x/net"
   packages = ["context"]
   revision = "a8b9294777976932365dabb6640cf1468d95c70f"
@@ -28,6 +22,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ab956336c3d303f609fe946b3c0df7e5b7624a74e76f94d47f0d166d8e498e3e"
+  inputs-digest = "e0a93430cc083cc49f0776d37ef590dd6f3148dad9c253e096825a18a2993c9c"
   solver-name = "gps-cdcl"
   solver-version = 1
