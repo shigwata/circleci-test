@@ -63,6 +63,7 @@ jobs:
           working_directory: go
           command: |
             make setup
+      - run: ls -al
 
       - run:
           name: test go
