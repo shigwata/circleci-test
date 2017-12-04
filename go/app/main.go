@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/shigwata/gae-go-sample/hello"
+	"github.com/shigwata/circleci-test/go/hello"
 )
 
 func init() {
