@@ -76,11 +76,11 @@ jobs:
             touch ./node/node2.txt
             ls -al ./node/
 
-        # cache
-        - save_cache:
-            key: dep-cache-{{ checksum "go/Gopkg.lock" }}
-            paths:
-              - go/vendor
+      # cache
+      - save_cache:
+          key: dep-cache-{{ checksum "go/Gopkg.lock" }}
+          paths:
+            - go/vendor
 
       # persist_to_workspace
       - run:
