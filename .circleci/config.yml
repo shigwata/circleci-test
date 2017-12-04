@@ -91,7 +91,7 @@ jobs:
           working_directory: node/my-app
           command: |
             npm run lint
-            npm test
+            # npm test
 
       # cache
       - save_cache:
