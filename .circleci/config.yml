@@ -48,6 +48,10 @@ jobs:
           keys:
             - dep-cache-{{ checksum "go/Gopkg.lock" }}
             - dep-cache-
+      - restore_cache:
+          keys:
+            - npm-cache-{{ checksum "node/my-app/package.json" }}
+            - npm-cache-
 
       - run: ls -al /tmp/workspace/app/
 
@@ -63,6 +67,7 @@ jobs:
           working_directory: go
           command: |
             make setup
+
       - run: ls -al
 
       - run:
@@ -74,14 +79,24 @@ jobs:
       - run:
           name: build node
           command: |
-            touch ./node/node2.txt
-            ls -al ./node/
+            npm install
+            npm run build
+
+      - run:
+          name: test node
+          command: |
+            npm run lint
+            npm test
 
       # cache
       - save_cache:
           key: dep-cache-{{ checksum "go/Gopkg.lock" }}
           paths:
             - go/vendor
+      - save_cache:
+          key: npm-cache-{{ checksum "node/my-app/package.json" }}
+          paths:
+            - node/my-app/node_modules
 
       # persist_to_workspace
       - run:
@@ -108,6 +123,12 @@ jobs:
 
       - run: ls -al go node
       - run: printenv
+
+      - run: ls -al go/app
+
+      - run: cp -r node/my-app/dist go/app
+
+      - run: ls -al go/app
 
       - deploy:
           name: Deploy
