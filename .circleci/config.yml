@@ -78,12 +78,14 @@ jobs:
 
       - run:
           name: build node
+          working_directory: node/my-app
           command: |
             npm install
             npm run build
 
       - run:
           name: test node
+          working_directory: node/my-app
           command: |
             npm run lint
             npm test
