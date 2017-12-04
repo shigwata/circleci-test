@@ -40,6 +40,9 @@ jobs:
     working_directory: *repository_root
     docker:
       - image: vvakame/circleci-gaego:latest
+    environment:
+      TZ: "/usr/share/zoneinfo/Asia/Tokyo"
+      DISPLAY: ":99"
     steps:
       - *attach_workspace
       - *load_code
@@ -118,6 +121,9 @@ jobs:
     working_directory: *repository_root
     docker:
       - image: vvakame/circleci-gaego:latest
+    environment:
+      TZ: "/usr/share/zoneinfo/Asia/Tokyo"
+      DISPLAY: ":99"
     steps:
       - *attach_workspace
       - *load_code
