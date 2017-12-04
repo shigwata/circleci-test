@@ -43,6 +43,12 @@ jobs:
     steps:
       - *attach_workspace
       - *load_code
+
+      - restore_cache:
+          keys:
+            - dep-cache-{{ checksum "go/Gopkg.lock" }}
+            - dep-cache-
+
       - run: ls -al /tmp/workspace/app/
 
       - run: ls -al
@@ -54,15 +60,27 @@ jobs:
 
       - run:
           name: build go
+          working_directory: go
           command: |
-            touch go/go2.txt
-            ls -al go/
+            make setup
+
+      - run:
+          name: test go
+          working_directory: go
+          command: |
+            make test
 
       - run:
           name: build node
           command: |
             touch ./node/node2.txt
             ls -al ./node/
+
+        # cache
+        - save_cache:
+            key: dep-cache-{{ checksum "go/Gopkg.lock" }}
+            paths:
+              - go/vendor
 
       # persist_to_workspace
       - run:
