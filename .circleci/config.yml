@@ -39,7 +39,7 @@ jobs:
   build:
     working_directory: *repository_root
     docker:
-      - image: vvakame/circleci-gaego
+      - image: vvakame/circleci-gaego:latest
     steps:
       - *attach_workspace
       - *load_code
@@ -156,7 +156,7 @@ jobs:
   deploy:
     working_directory: *repository_root
     docker:
-      - image: vvakame/circleci-gaego
+      - image: vvakame/circleci-gaego:latest
     steps:
       - *attach_workspace
       - *load_code
