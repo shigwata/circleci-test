@@ -97,62 +97,6 @@ jobs:
             - app/go
             - app/node
 
-  build_java:
-    working_directory: ~/app
-    docker:
-      - image: circleci/openjdk:8-jdk-browsers
-    steps:
-      - *attach_workspace
-      - *load_code
-
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "java/my-app/pom.xml" }}
-          - v1-dependencies-
-
-      - run: ls -al /tmp/workspace/app/
-
-      - run:
-          name: install gcloud
-          command: |
-            sudo apt-get install lsb-release
-            export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
-            echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-            curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-            sudo apt-get update && sudo apt-get install google-cloud-sdk
-      - run:
-          name: install components
-          command: |
-            sudo apt-get install google-cloud-sdk-datastore-emulator
-
-      - run: ls -al
-      - run: gcloud version
-      - run: gcloud components list
-      - run: java -version
-      - run: mvn --version
-      - run: printenv
-      - run:
-          name: build java
-          working_directory: java/my-app
-          command: |
-            mvn package
-
-      - save_cache:
-          paths:
-            - java/my-app/target
-          key: v1-dependencies-{{ checksum "java/my-app/pom.xml" }}
-
-      # persist_to_workspace
-      - run:
-          name: persist to workspace
-          command: |
-            rm -rf /tmp/workspace/app/java
-            cp -r java /tmp/workspace/app
-      - persist_to_workspace:
-          root: *workspace_root
-          paths:
-            - app/java
-
   deploy:
     working_directory: *repository_root
     docker:
@@ -162,7 +106,7 @@ jobs:
       - *load_code
       - run: ls -al /tmp/workspace/app/
 
-      - run: ls -al go java node
+      - run: ls -al go node
       - run: printenv
 
       - deploy:
@@ -178,10 +122,6 @@ workflows:
       - build:
           requires:
             - checkout_code
-      - build_java:
-          requires:
-            - checkout_code
       - deploy:
           requires:
             - build
-            - build_java
