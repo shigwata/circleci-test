@@ -2,7 +2,7 @@ version: 2
 
 references:
   repository_root: &repository_root
-    /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+    /go/src/github.com/{{CIRCLE_PROJECT_USERNAME}}/{{CIRCLE_PROJECT_REPONAME}}
   workspace_root: &workspace_root
     /tmp/workspace
   attach_workspace: &attach_workspace
