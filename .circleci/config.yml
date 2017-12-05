@@ -49,7 +49,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - dep-cache-{{ checksum "go/Gopkg.lock" }}
+            - dep-cache-{{ checksum "go/Gopkg.toml" }}
             - dep-cache-
       - restore_cache:
           keys:
@@ -95,7 +95,7 @@ jobs:
 
       # cache
       - save_cache:
-          key: dep-cache-{{ checksum "go/Gopkg.lock" }}
+          key: dep-cache-{{ checksum "go/Gopkg.toml" }}
           paths:
             - go/vendor
       - save_cache:
