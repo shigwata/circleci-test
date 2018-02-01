@@ -167,6 +167,9 @@ jobs:
             tar -zxf google-cloud-sdk.tar.gz
             ./google-cloud-sdk/install.sh --usage-reporting=true --path-update=true --bash-completion=true --rc-path=${BASH_ENV} --additional-components app-engine-go
             # ./google-cloud-sdk/bin/gcloud init
+      - run: echo ${PATH}
+      - run: echo 'export PATH=$HOME/google-cloud-sdk/bin:$PATH' >> $BASH_ENV
+      - run: echo ${PATH}
       - run: gcloud version
       - run: goapp version
 
