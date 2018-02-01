@@ -166,7 +166,7 @@ jobs:
             wget -O google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_CLOUD_SDK_VERSION}-linux-x86_64.tar.gz
             tar -zxf google-cloud-sdk.tar.gz
             ./google-cloud-sdk/install.sh --usage-reporting=true --path-update=true --bash-completion=true --rc-path=${BASH_ENV} --additional-components app-engine-go
-            ./google-cloud-sdk/bin/gcloud init
+            # ./google-cloud-sdk/bin/gcloud init
       - run: gcloud version
       - run: goapp version
 
