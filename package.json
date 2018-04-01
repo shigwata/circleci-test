@@ -4,7 +4,7 @@
   "description": "",
   "devDependencies": {
     "husky": "^0.14.3",
-    "lint-staged": "^6.0.0"
+    "lint-staged": "^7.0.2"
   },
   "scripts": {
     "precommit": "lint-staged"
