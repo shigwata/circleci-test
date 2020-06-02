@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.13
+      - image: cimg/go:1.13
     steps:
       - checkout
       - restore_cache:
@@ -13,7 +13,7 @@ jobs:
       - save_cache:
           key: v1-pkg-cache
           paths:
-            - /go/pkg/mod
+            - /home/circleci/go/pkg/mod
 
 workflows:
   build:
